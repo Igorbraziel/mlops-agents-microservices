@@ -1,0 +1,246 @@
+:root {
+  --primary-color: #2563eb;
+  --bg-color: #f8fafc;
+  --sidebar-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --user-msg-bg: #dbeafe;
+  --assistant-msg-bg: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-header {
+  background-color: #0f172a;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.header-badge {
+  background-color: var(--primary-color);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.app-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.demo-sidebar {
+  width: 320px;
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.demo-sidebar h2 {
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.demo-sidebar p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.demo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.demo-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.demo-card:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.demo-card:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.demo-card strong {
+  font-size: 0.875rem;
+  color: var(--primary-color);
+}
+
+.demo-card span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.chat-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-color);
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.message-bubble {
+  max-width: 80%;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.message-bubble.user {
+  align-self: flex-end;
+  background-color: var(--user-msg-bg);
+  color: #1e3a8a;
+  border-bottom-right-radius: 2px;
+}
+
+.message-bubble.assistant {
+  align-self: flex-start;
+  background-color: var(--assistant-msg-bg);
+  border: 1px solid var(--border-color);
+  border-bottom-left-radius: 2px;
+}
+
+.role-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.message-content {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.message-content p {
+  margin: 0 0 1rem 0;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.input-area {
+  padding: 1.5rem 2rem;
+  background-color: white;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 1rem;
+}
+
+.input-area input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.9375rem;
+}
+
+.input-area input:focus {
+  border-color: var(--primary-color);
+  ring: 2px solid rgba(37, 99, 235, 0.1);
+}
+
+.input-area button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.input-area button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.input-area button:disabled {
+  background-color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* Loading Animation */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background-color: var(--text-muted);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}

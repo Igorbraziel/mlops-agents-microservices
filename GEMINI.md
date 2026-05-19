@@ -13,17 +13,28 @@ This is a Python-based software project designed to demonstrate a multi-agent ar
 ## Building and Running
 
 ### Dependency Management
-This project strictly uses `uv` for dependency management.
-- **Initialize/Add dependencies:** `uv add <package>`
-- **Sync environment:** `uv sync`
-- **Run applications:** `uv run main.py` or `uv run uvicorn main:app --reload`
+This project strictly uses `uv` for dependency management for Python and `npm` for the frontend.
+- **Python:** `uv sync`
+- **Frontend:** `cd frontend && npm install`
 
 ### Running the Project
-- The main entry point for the global project is `main.py`, executable via `uv run main.py`.
-- For individual microservices (e.g., `search-svc`, `report-svc` as described in the docs), navigate to their respective directories and run the FastAPI server:
-  ```bash
-  uv run uvicorn main:app --host 0.0.0.0 --port 8080 --reload
-  ```
+The project consists of three main parts:
+
+1. **Microservices (Search & Report):**
+   ```bash
+   cd microservices/search-svc && uv run uvicorn main:app --port 8081
+   cd microservices/report-svc && uv run uvicorn main:app --port 8082
+   ```
+
+2. **Orchestrator API:**
+   ```bash
+   cd agents && uv run python api.py
+   ```
+
+3. **React Frontend:**
+   ```bash
+   cd frontend && npm run dev
+   ```
 
 ### Deployment
 Microservices are containerized using Docker. The standard build process utilizes `uv` to install dependencies in the system environment optimized for Docker:

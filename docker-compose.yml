@@ -6,7 +6,7 @@ services:
     ports:
       - "8001:8080"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -18,7 +18,33 @@ services:
     ports:
       - "8002:8080"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  orchestrator-api:
+    build:
+      context: ./agents
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - SEARCH_SVC_URL=http://search-svc:8080
+      - REPORT_SVC_URL=http://report-svc:8080
+    depends_on:
+      search-svc:
+        condition: service_healthy
+      report-svc:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - orchestrator-api
