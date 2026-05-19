@@ -1,11 +1,12 @@
 from typing import List, Dict, Any
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from datetime import datetime
 
 app = FastAPI(
-    title="Report Generator - Demo",
-    description="Microservice responsible for receiving raw content and returning a Markdown formatted report.",
+    title="Gerador de Relatórios - Demo",
+    description="Microserviço responsável por receber conteúdo bruto e retornar um relatório formatado em Markdown.",
     version="0.1.0"
 )
 
@@ -26,35 +27,40 @@ class ReportResponse(BaseModel):
     markdown: str
     characters: int
 
+@app.get("/")
+def root():
+    """Redireciona para a documentação interativa."""
+    return RedirectResponse(url="/docs")
+
 @app.post("/generate", response_model=ReportResponse)
 def generate_report(req: ReportRequest) -> Any:
-    """Generates a structured Markdown report from the received documents."""
-    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    """Gera um relatório estruturado em Markdown a partir dos documentos recebidos."""
+    now = datetime.now().strftime("%d/%m/%Y %H:%M")
 
     lines = [
         f"# {req.report_title}",
         f"",
-        f"**Author:** {req.author}  ",
-        f"**Generated at:** {now}  ",
-        f"**Total sources:** {len(req.documents)}",
+        f"**Autor:** {req.author}  ",
+        f"**Gerado em:** {now}  ",
+        f"**Total de fontes:** {len(req.documents)}",
         f"",
         "---",
         "",
-        "## Executive Summary",
+        "## Resumo Executivo",
         "",
-        f"This report consolidates {len(req.documents)} document(s) on the topic **{req.report_title}**.",
+        f"Este relatório consolida {len(req.documents)} documento(s) sobre o tópico **{req.report_title}**.",
         "",
     ]
 
     if req.additional_instructions:
         lines += [
-            "### Additional Context",
+            "### Contexto Adicional",
             "",
             req.additional_instructions,
             "",
         ]
 
-    lines += ["## Analyzed Documents", ""]
+    lines += ["## Documentos Analisados", ""]
 
     for i, doc in enumerate(req.documents, 1):
         lines += [
@@ -67,7 +73,7 @@ def generate_report(req: ReportRequest) -> Any:
     lines += [
         "---",
         "",
-        "*Report generated automatically by report-svc*",
+        "*Relatório gerado automaticamente por report-svc*",
     ]
 
     markdown = "\n".join(lines)

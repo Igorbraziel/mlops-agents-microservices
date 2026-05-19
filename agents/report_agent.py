@@ -9,9 +9,9 @@ from agno.tools import tool
 REPORT_SVC_URL = os.environ.get("REPORT_SVC_URL", "http://localhost:8002")
 
 @tool(description=(
-    "Generates a structured Markdown report from a list of documents. "
-    "Use it when you need to consolidate researched information into a formatted document. "
-    "Receives title, author, and a list of documents with title and content."
+    "Gera um relatório estruturado em Markdown a partir de uma lista de documentos. "
+    "Use quando precisar consolidar informações pesquisadas em um documento formatado. "
+    "Recebe título, autor e uma lista de documentos com título e conteúdo."
 ))
 def generate_report(
     report_title: str,
@@ -19,7 +19,7 @@ def generate_report(
     documents: List[Dict[str, str]],
     additional_instructions: str = "",
 ) -> Dict[str, Any]:
-    """Calls the report generation microservice on Cloud Run."""
+    """Faz a chamada para o microserviço de geração de relatórios no Cloud Run."""
     response = httpx.post(
         f"{REPORT_SVC_URL}/generate",
         json={
@@ -34,14 +34,19 @@ def generate_report(
     return response.json()
 
 report_agent = Agent(
-    name="Report Agent",
-    model=Gemini(id="gemini-2.0-flash"),
+    name="Agente de Relatórios",
+    model=Gemini(id="gemini-2.5-flash-lite"),
+    fallback_models=[
+        Gemini(id="gemini-3.1-flash-lite"),
+        Gemini(id="gemini-2.5-flash"),
+        Gemini(id="gemma-4-31b"),
+    ],
     tools=[generate_report],
     instructions=[
-        "You are an expert in creating clear and well-structured technical reports.",
-        "When receiving documents to consolidate, use the generate_report tool.",
-        "Always format the documents as a list of dictionaries with 'title' and 'content' keys.",
-        "After generating the report, clearly display the 'markdown' field returned by the tool.",
+        "Você é um especialista em criar relatórios técnicos claros e bem estruturados.",
+        "Ao receber documentos para consolidar, use a ferramenta generate_report.",
+        "Sempre formate os documentos como uma lista de dicionários com as chaves 'title' e 'content'.",
+        "Após gerar o relatório, exiba claramente o campo 'markdown' retornado pela ferramenta.",
     ],
     markdown=True,
 )

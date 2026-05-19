@@ -1,0 +1,24 @@
+services:
+  search-svc:
+    build:
+      context: ./microservices/search-svc
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  report-svc:
+    build:
+      context: ./microservices/report-svc
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

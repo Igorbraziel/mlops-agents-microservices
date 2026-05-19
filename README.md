@@ -34,9 +34,12 @@ mlops-agents-microservices/
 │   ├── search_agent.py         # Agente especializado em pesquisa
 │   ├── report_agent.py         # Agente especializado em geração de relatórios
 │   └── orchestrator.py         # Coordenador central (agno Team)
-├── deploy.sh                   # Script de automação de deploy
+├── scripts/
+│   └── deploy.sh               # Script de automação de deploy
 ├── .env.example
 ├── .gitignore
+├── docker-compose.yml          # Orquestração de containers local
+├── Makefile                    # Atalhos para comandos comuns
 ├── GEMINI.md                   # Instruções e contexto para Agentes de IA
 └── README.md
 ```
@@ -44,9 +47,10 @@ mlops-agents-microservices/
 ## Pré-requisitos
 
 - CLI `gcloud` (Google Cloud SDK) configurada e autenticada
-- `docker` instalado (para builds e testes locais)
-- `python >= 3.11`
+- `docker` e `docker compose` instalados
+- `python >= 3.12`
 - `uv` (instalador ultrarrápido de pacotes Python)
+- `make`
 
 ## Configuração e Instalação
 
@@ -55,47 +59,48 @@ mlops-agents-microservices/
    curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
-2. **Inicializar as dependências:**
+2. **Inicializar o ambiente:**
    ```bash
-   uv sync
-   source .venv/bin/activate
+   make setup
    ```
 
 3. **Configurar Variáveis de Ambiente:**
    ```bash
    cp .env.example .env
-   # Adicione sua GEMINI_API_KEY e as URLs dos serviços caso já estejam em produção
+   # Adicione sua GEMINI_API_KEY no arquivo .env
    ```
 
 ## Executando Localmente
 
-Para testar o sistema localmente, você pode iniciar os microsserviços em portas diferentes:
+A forma mais simples de executar o projeto completo é utilizando o `docker-compose` via `Makefile`.
 
-**Terminal 1 (search-svc):**
-```bash
-cd microservices/search-svc
-uv run uvicorn main:app --port 8001 --reload
-```
+1. **Construir e iniciar os microsserviços:**
+   ```bash
+   make build
+   make up
+   ```
+   *Os serviços estarão disponíveis em http://localhost:8001 (search-svc) e http://localhost:8002 (report-svc). Ao acessar a raiz de cada serviço, você será redirecionado para a documentação Swagger.*
 
-**Terminal 2 (report-svc):**
-```bash
-cd microservices/report-svc
-uv run uvicorn main:app --port 8002 --reload
-```
+2. **Executar o Orquestrador (Demo):**
+   ```bash
+   make run-demo
+   ```
 
-**Terminal 3 (Orquestrador):**
-```bash
-cd agents
-uv run python orchestrator.py
-```
+## Comandos Úteis (Makefile)
+
+- `make up`: Inicia os containers em background.
+- `make down`: Para e remove os containers.
+- `make logs`: Visualiza os logs dos serviços em tempo real.
+- `make run-demo`: Executa os agentes localmente.
+- `make clean`: Limpa caches do Python.
 
 ## Deploy
 
-O script `deploy.sh` automatiza o deploy dos dois microsserviços no Google Cloud Run. Certifique-se de estar autenticado utilizando `gcloud auth login` e de ter configurado o projeto ativo.
+O script `scripts/deploy.sh` automatiza o deploy no Google Cloud Run.
 
 ```bash
-chmod +x deploy.sh
-./deploy.sh
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
 ```
 
-Após o deploy, atualize o arquivo `.env` com as novas URLs geradas pelo Cloud Run para permitir que o orquestrador utilize os endpoints de produção em vez de `localhost`.
+Após o deploy, atualize as URLs no arquivo `.env` para apontar para os endereços do Cloud Run em vez do `localhost`.

@@ -9,12 +9,12 @@ from agno.tools import tool
 SEARCH_SVC_URL = os.environ.get("SEARCH_SVC_URL", "http://localhost:8001")
 
 @tool(description=(
-    "Searches for relevant documents in the knowledge base about MLOps, "
-    "serverless, microservices, and agents. Use it when you need technical "
-    "information about these topics. Returns a list of documents with title and content."
+    "Busca documentos relevantes na base de conhecimento sobre MLOps, "
+    "serverless, microserviços e agentes. Use quando precisar de informações "
+    "técnicas sobre esses tópicos. Retorna uma lista de documentos com título e conteúdo."
 ))
 def search_documents(query: str, top_k: int = 3) -> Dict[str, Any]:
-    """Calls the semantic search microservice on Cloud Run."""
+    """Faz a chamada para o microserviço de busca semântica no Cloud Run."""
     response = httpx.post(
         f"{SEARCH_SVC_URL}/search",
         json={"query": query, "top_k": top_k},
@@ -24,14 +24,19 @@ def search_documents(query: str, top_k: int = 3) -> Dict[str, Any]:
     return response.json()
 
 search_agent = Agent(
-    name="Search Agent",
-    model=Gemini(id="gemini-2.0-flash"),
+    name="Agente de Busca",
+    model=Gemini(id="gemini-2.5-flash-lite"),
+    fallback_models=[
+        Gemini(id="gemini-3.1-flash-lite"),
+        Gemini(id="gemini-2.5-flash"),
+        Gemini(id="gemma-4-31b"),
+    ],
     tools=[search_documents],
     instructions=[
-        "You are an expert in technical research regarding MLOps and AI architectures.",
-        "When receiving a question, use the search_documents tool to find relevant information.",
-        "Return the results in a structured way: list the found documents with title and summary.",
-        "Always indicate how many documents were found.",
+        "Você é um especialista em pesquisa técnica sobre MLOps e arquiteturas de IA.",
+        "Ao receber uma pergunta, use a ferramenta search_documents para encontrar informações relevantes.",
+        "Retorne os resultados de forma estruturada: liste os documentos encontrados com título e resumo.",
+        "Sempre indique quantos documentos foram encontrados.",
     ],
     markdown=True,
 )

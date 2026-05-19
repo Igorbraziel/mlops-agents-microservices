@@ -12,6 +12,9 @@ ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 COPY pyproject.toml uv.lock* ./
 RUN uv sync --frozen --no-install-project --no-dev
 
+# Coloca o ambiente virtual no PATH
+ENV PATH="/app/.venv/bin:$PATH"
+
 # Copia o código da aplicação
 COPY main.py .
 

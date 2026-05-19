@@ -1,68 +1,74 @@
 from typing import List, Dict, Any
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 app = FastAPI(
-    title="Semantic Search - Demo",
-    description="Search microservice using an in-memory knowledge base for demonstration purposes.",
+    title="Busca Semântica - Demo",
+    description="Microserviço de busca utilizando uma base de conhecimento em memória para fins de demonstração.",
     version="0.1.0"
 )
+
+@app.get("/")
+def root():
+    """Redireciona para a documentação interativa."""
+    return RedirectResponse(url="/docs")
 
 # Mock knowledge base representing what would typically be in a Vector DB
 KNOWLEDGE_BASE: List[Dict[str, Any]] = [
     {
         "id": 1,
-        "title": "Cold Start in Cloud Run",
+        "title": "Cold Start no Cloud Run",
         "content": (
-            "Cold start is the initialization time of a serverless instance when "
-            "there are no active instances. It can take from 200ms to 3s. Factors that increase it: "
-            "large Docker images, heavy imports like torch and tensorflow. "
-            "Mitigation: min-instances, lightweight images, lazy loading."
+            "Cold start é o tempo de inicialização de uma instância serverless quando "
+            "não há instâncias ativas. Pode levar de 200ms a 3s. Fatores que o aumentam: "
+            "imagens Docker grandes, imports pesados como torch e tensorflow. "
+            "Mitigação: min-instances, imagens leves, lazy loading."
         ),
         "tags": ["serverless", "cloud run", "cold start", "performance"],
     },
     {
         "id": 2,
-        "title": "Microservices vs Monolith",
+        "title": "Microserviços vs Monólito",
         "content": (
-            "Microservices are small, independent units with a single responsibility. "
-            "Each service is deployable, scalable, and fails in isolation. "
-            "A monolith is simpler for small teams and POCs, but harder to scale "
-            "individual parts. Microservices are ideal for production with multiple teams."
+            "Microserviços são unidades pequenas e independentes com uma única responsabilidade. "
+            "Cada serviço é implantável, escalável e falha de forma isolada. "
+            "Um monólito é mais simples para equipes pequenas e POCs, mas difícil de escalar "
+            "partes individuais. Microserviços são ideais para produção com várias equipes."
         ),
-        "tags": ["microservices", "monolith", "architecture"],
+        "tags": ["microserviços", "monólito", "arquitetura"],
     },
     {
         "id": 3,
-        "title": "Secrets Management with GCP Secret Manager",
+        "title": "Gerenciamento de Segredos com GCP Secret Manager",
         "content": (
-            "Secrets must never exist in the code or the Docker image. "
-            "GCP Secret Manager stores versioned and audited secrets. "
-            "Cloud Run injects them as environment variables at runtime via --set-secrets. "
-            "Principle of least privilege: each microservice accesses only the secrets it needs."
+            "Segredos nunca devem existir no código ou na imagem Docker. "
+            "O GCP Secret Manager armazena segredos versionados e auditados. "
+            "O Cloud Run os injeta como variáveis de ambiente em tempo de execução via --set-secrets. "
+            "Princípio do menor privilégio: cada microserviço acessa apenas os segredos necessários."
         ),
-        "tags": ["secrets", "security", "gcp", "iam"],
+        "tags": ["segredos", "segurança", "gcp", "iam"],
     },
     {
         "id": 4,
-        "title": "Pipeline vs Microservices in MLOps",
+        "title": "Pipeline vs Microserviços no MLOps",
         "content": (
-            "Pipeline: sequential and coupled, ideal for ETL and model training. "
-            "Microservices: on-demand and decoupled, ideal for APIs and agent tools. "
-            "Model training uses pipelines. Serving the model as an agent tool uses microservices."
+            "Pipeline: sequencial e acoplado, ideal para ETL e treinamento de modelos. "
+            "Microserviços: sob demanda e desacoplados, ideal para APIs e ferramentas de agentes. "
+            "O treinamento de modelos usa pipelines. Servir o modelo como ferramenta de agente usa microserviços."
         ),
-        "tags": ["pipeline", "mlops", "architecture", "agents"],
+        "tags": ["pipeline", "mlops", "arquitetura", "agentes"],
     },
     {
         "id": 5,
-        "title": "Agents with Tools as Microservices",
+        "title": "Agentes com Ferramentas como Microserviços",
         "content": (
-            "Each agent tool can be an independent microservice in Cloud Run. "
-            "Benefits: individual observability per tool, independent scaling, "
-            "reuse across multiple agents, fault isolation, technological flexibility. "
-            "The Agno agent makes HTTP calls to the microservice endpoints."
+            "Cada ferramenta de agente pode ser um microserviço independente no Cloud Run. "
+            "Benefícios: observabilidade individual por ferramenta, escalabilidade independente, "
+            "reutilização entre múltiplos agentes, isolamento de falhas, flexibilidade tecnológica. "
+            "O agente Agno faz chamadas HTTP para os endpoints do microserviço."
         ),
-        "tags": ["agents", "tools", "cloud run", "agno"],
+        "tags": ["agentes", "ferramentas", "cloud run", "agno"],
     },
 ]
 
@@ -84,7 +90,7 @@ class SearchResponse(BaseModel):
 
 def search_by_relevance(query: str, top_k: int) -> List[Dict[str, Any]]:
     """
-    Simple keyword search (mock for semantic search).
+    Busca simples por palavra-chave (mock para busca semântica).
     """
     query_lower = query.lower()
     results = []
@@ -107,7 +113,7 @@ def search_by_relevance(query: str, top_k: int) -> List[Dict[str, Any]]:
 
 @app.post("/search", response_model=SearchResponse)
 def search(req: SearchRequest) -> Any:
-    """Endpoint to search relevant documents based on a query."""
+    """Endpoint para buscar documentos relevantes com base em uma consulta."""
     results = search_by_relevance(req.query, req.top_k)
     return {
         "query": req.query,
@@ -117,5 +123,5 @@ def search(req: SearchRequest) -> Any:
 
 @app.get("/health")
 def health() -> Dict[str, str]:
-    """Health check endpoint of the microservice."""
+    """Endpoint de verificação de saúde do microserviço."""
     return {"status": "ok", "service": "search-svc"}
