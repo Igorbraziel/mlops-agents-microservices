@@ -45,8 +45,8 @@ REPORT_URL=$(gcloud run services describe report-svc \
 echo -e "\n${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}✅ report-svc online em: ${REPORT_URL}${NC}"
 echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "\n${BLUE}📋 Logs em tempo real:${NC}"
-echo -e "   gcloud run services logs tail report-svc --region ${REGION}"
+echo -e "\n${BLUE}📋 Visualizar logs no GCP Console:${NC}"
+echo -e "   https://console.cloud.google.com/run/detail/${REGION}/report-svc/logs?project=${PROJECT_ID}"
 
 # Health check
 echo -e "\n${BLUE}🩺 Health check...${NC}"

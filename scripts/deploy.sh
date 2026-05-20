@@ -34,7 +34,7 @@ check_health() {
   if curl --silent --fail --max-time 10 "${url}/health" | grep -q '"ok"'; then
     echo -e "   ${GREEN}✅ ${name}: OK${NC}"
   else
-    echo -e "   ${RED}❌ ${name}: FALHA (verifique os logs: gcloud run services logs read ${name} --region ${REGION})${NC}"
+    echo -e "   ${RED}❌ ${name}: FALHA (verifique os logs no Console GCP)${NC}"
   fi
 }
 
@@ -86,6 +86,6 @@ echo -e "   SEARCH_SVC_URL=${SEARCH_URL}"
 echo -e "   REPORT_SVC_URL=${REPORT_URL}"
 echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "\n${BLUE}💡 Atualize seu .env local com as URLs acima para testes locais.${NC}"
-echo -e "${BLUE}📋 Para ver logs em tempo real:${NC}"
-echo -e "   gcloud run services logs tail search-svc --region ${REGION}"
-echo -e "   gcloud run services logs tail report-svc --region ${REGION}"
+echo -e "${BLUE}📋 Visualizar logs no GCP Console:${NC}"
+echo -e "   search-svc: https://console.cloud.google.com/run/detail/${REGION}/search-svc/logs?project=${PROJECT_ID}"
+echo -e "   report-svc: https://console.cloud.google.com/run/detail/${REGION}/report-svc/logs?project=${PROJECT_ID}"
