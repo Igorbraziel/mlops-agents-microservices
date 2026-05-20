@@ -69,14 +69,6 @@ make up
 ```
 *Acesse o Dashboard em http://localhost:3000*
 
-### 2. Modo Produção Híbrido (Local -> Cloud Run)
-Neste modo, apenas o Orquestrador e o Frontend rodam localmente (ou em containers), mas eles se comunicam com os microsserviços já deployados no **Google Cloud Run**.
-```bash
-# Certifique-se de que as URLs no .env apontam para o Cloud Run
-make build-prod
-make up-prod
-```
-
 ---
 
 ## Guia de Deploy (Google Cloud Run)
@@ -84,6 +76,16 @@ make up-prod
 Se você deseja realizar o deploy dos microsserviços no GCP para testar o modo produção ou a escalabilidade serverless, siga as instruções detalhadas no nosso guia:
 
 👉 **[Guia de Deploy no Cloud Run](docs/deploy-cloud-run.md)**
+
+---
+
+### 2. Modo Produção Híbrido (Local -> Cloud Run)
+Neste modo, apenas o Orquestrador e o Frontend rodam localmente (ou em containers), mas eles se comunicam com os microsserviços já deployados no **Google Cloud Run**.
+```bash
+# Certifique-se de que as URLs no .env apontam para o Cloud Run
+make build-prod
+make up-prod
+```
 
 ---
 
@@ -102,5 +104,5 @@ Se você deseja realizar o deploy dos microsserviços no GCP para testar o modo 
 
 ---
 
-## Autores
-Desenvolvido como demonstração técnica para o Grupo de MLOps.
+## Autor
+**Igor Reis Braziel** - [braziel@discente.ufg.br](mailto:braziel@discente.ufg.br)
