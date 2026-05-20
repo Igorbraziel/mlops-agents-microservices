@@ -42,13 +42,12 @@ REPORT_URL=$(gcloud run services describe report-svc \
   --region "$REGION" \
   --format 'value(status.url)')
 
-echo -e "\n${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}✅ report-svc online em: ${REPORT_URL}${NC}"
 echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "\n${BLUE}📋 Visualizar logs no GCP Console:${NC}"
-echo -e "   https://console.cloud.google.com/run/detail/${REGION}/report-svc/logs?project=${PROJECT_ID}"
 
 # Health check
+
 echo -e "\n${BLUE}🩺 Health check...${NC}"
 if curl --silent --fail --max-time 10 "${REPORT_URL}/health" | grep -q '"ok"'; then
   echo -e "${GREEN}✅ report-svc: OK${NC}"

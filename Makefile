@@ -10,8 +10,14 @@ help: ## Exibe esta ajuda
 
 # ── Desenvolvimento Local ─────────────────────────────────────────────────────
 
-setup: ## Instala as dependências locais via uv e npm
-	uv sync
+setup: ## Instala as dependências locais (agents, microservices e frontend)
+	@echo "📦 Sincronizando dependências do agents..."
+	cd agents && uv sync
+	@echo "📦 Sincronizando dependências do report-svc..."
+	cd microservices/report-svc && uv sync
+	@echo "📦 Sincronizando dependências do search-svc..."
+	cd microservices/search-svc && uv sync
+	@echo "📦 Instalando dependências do frontend..."
 	cd frontend && npm install
 
 build: ## Constrói as imagens via Docker Compose (Dev)
@@ -19,6 +25,7 @@ build: ## Constrói as imagens via Docker Compose (Dev)
 
 up: ## Inicia todos os serviços via Docker Compose (Dev)
 	docker compose -f docker-compose.dev.yml up -d
+	@echo "🚀 Frontend (Dev) disponível em: http://localhost:5173"
 
 down: ## Para e remove os containers (Dev)
 	docker compose -f docker-compose.dev.yml down
@@ -30,6 +37,7 @@ build-prod: ## Constrói as imagens para o modo produção (API + Frontend)
 
 up-prod: ## Inicia API e Frontend apontando para o Cloud Run
 	docker compose -f docker-compose.prod.yml up -d
+	@echo "🚀 Frontend (Prod) disponível em: http://localhost:8080"
 
 down-prod: ## Para os containers do modo produção
 	docker compose -f docker-compose.prod.yml down

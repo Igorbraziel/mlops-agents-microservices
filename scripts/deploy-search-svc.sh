@@ -42,13 +42,12 @@ SEARCH_URL=$(gcloud run services describe search-svc \
   --region "$REGION" \
   --format 'value(status.url)')
 
-echo -e "\n${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}✅ search-svc online em: ${SEARCH_URL}${NC}"
 echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "\n${BLUE}📋 Visualizar logs no GCP Console:${NC}"
-echo -e "   https://console.cloud.google.com/run/detail/${REGION}/search-svc/logs?project=${PROJECT_ID}"
 
 # Health check
+
 echo -e "\n${BLUE}🩺 Health check...${NC}"
 if curl --silent --fail --max-time 10 "${SEARCH_URL}/health" | grep -q '"ok"'; then
   echo -e "${GREEN}✅ search-svc: OK${NC}"
