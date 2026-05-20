@@ -24,12 +24,17 @@ def search_documents(query: str, top_k: int = 3) -> Dict[str, Any]:
     return response.json()
 
 search_agent = Agent(
-    name="Agente de Busca",
+    name="search_agent",
+    description="Agente especialista em pesquisa técnica sobre MLOps e arquiteturas de IA.",
     model=Gemini(id="gemini-2.5-flash-lite"),
     fallback_models=[
-        Gemini(id="gemini-3.1-flash-lite"),
+        Gemini(id="gemini-3.1-flash-lite-preview"),
         Gemini(id="gemini-2.5-flash"),
-        Gemini(id="gemma-4-31b"),
+        Gemini(id="gemini-2.0-flash"),
+        Gemini(id="gemma-3-27b-it"),
+        Gemini(id="gemma3:12b"),
+        Gemini(id="gemma3:4b"),
+        Gemini(id="gemma3:1b"),
     ],
     tools=[search_documents],
     instructions=[

@@ -34,12 +34,17 @@ def generate_report(
     return response.json()
 
 report_agent = Agent(
-    name="Agente de Relatórios",
+    name="report_agent",
+    description="Agente especialista em criar relatórios técnicos claros e bem estruturados.",
     model=Gemini(id="gemini-2.5-flash-lite"),
     fallback_models=[
-        Gemini(id="gemini-3.1-flash-lite"),
+        Gemini(id="gemini-3.1-flash-lite-preview"),
         Gemini(id="gemini-2.5-flash"),
-        Gemini(id="gemma-4-31b"),
+        Gemini(id="gemini-2.0-flash"),
+        Gemini(id="gemma-3-27b-it"),
+        Gemini(id="gemma3:12b"),
+        Gemini(id="gemma3:4b"),
+        Gemini(id="gemma3:1b"),
     ],
     tools=[generate_report],
     instructions=[
