@@ -1,7 +1,7 @@
 .PHONY: help setup build up down logs run-demo run-api run-frontend clean \
         deploy deploy-search deploy-report \
-        logs-search logs-report logs-all \
-        urls health
+        urls health \
+        build-prod up-prod down-prod
 
 REGION ?= us-central1
 
@@ -14,17 +14,30 @@ setup: ## Instala as dependências locais via uv e npm
 	uv sync
 	cd frontend && npm install
 
-build: ## Constrói as imagens via Docker Compose
-	docker compose build
+build: ## Constrói as imagens via Docker Compose (Dev)
+	docker compose -f docker-compose.dev.yml build
 
-up: ## Inicia todos os serviços via Docker Compose
-	docker compose up -d
+up: ## Inicia todos os serviços via Docker Compose (Dev)
+	docker compose -f docker-compose.dev.yml up -d
 
-down: ## Para e remove os containers
-	docker compose down
+down: ## Para e remove os containers (Dev)
+	docker compose -f docker-compose.dev.yml down
+
+# ── Setup "Produção" (Local Orchestrator -> Cloud Run Microservices) ──────────
+
+build-prod: ## Constrói as imagens para o modo produção (API + Frontend)
+	docker compose -f docker-compose.prod.yml build
+
+up-prod: ## Inicia API e Frontend apontando para o Cloud Run
+	docker compose -f docker-compose.prod.yml up -d
+
+down-prod: ## Para os containers do modo produção
+	docker compose -f docker-compose.prod.yml down
+
+# ── Utilitários de Execução ───────────────────────────────────────────────────
 
 logs: ## Exibe os logs dos containers locais (Docker Compose)
-	docker compose logs -f
+	docker compose -f docker-compose.dev.yml logs -f
 
 run-demo: ## Executa o orquestrador (CLI) localmente
 	cd agents && uv run python orchestrator.py
@@ -50,20 +63,6 @@ deploy-search: ## Faz o deploy isolado do search-svc no Cloud Run
 
 deploy-report: ## Faz o deploy isolado do report-svc no Cloud Run
 	bash scripts/deploy-report-svc.sh
-
-# ── Cloud Run — Logs ──────────────────────────────────────────────────────────
-
-logs-search: ## Exibe os logs em tempo real do search-svc no Cloud Run
-	gcloud run services logs tail search-svc --region $(REGION)
-
-logs-report: ## Exibe os logs em tempo real do report-svc no Cloud Run
-	gcloud run services logs tail report-svc --region $(REGION)
-
-logs-all: ## Exibe logs de ambos os serviços em paralelo (Ctrl+C para parar)
-	@echo "Iniciando logs em paralelo (search-svc | report-svc)..."
-	@gcloud run services logs tail search-svc --region $(REGION) | sed 's/^/[search-svc] /' & \
-	 gcloud run services logs tail report-svc --region $(REGION) | sed 's/^/[report-svc] /' & \
-	 wait
 
 # ── Cloud Run — Utilitários ───────────────────────────────────────────────────
 

@@ -1,106 +1,106 @@
 # Microsserviços de Agentes MLOps
 
+Este repositório demonstra uma **Arquitetura Multiagente** utilizando **Microsserviços Compartilhados**. O projeto utiliza o framework **Agno** para orquestração de agentes e **FastAPI** para os microsserviços, com suporte para deploy no Google Cloud Run e execução local via Docker Compose.
+
 ## Visão Geral da Arquitetura
 
-Este repositório demonstra uma **Arquitetura Multiagente** utilizando **Microsserviços Compartilhados**. Ele realiza o deploy de dois microsserviços independentes no Google Cloud Run e os coordena utilizando um orquestrador `agno` com dois agentes especializados.
+O sistema é composto por um Orquestrador central que coordena agentes especializados. Cada agente utiliza ferramentas que, por trás das cenas, realizam chamadas HTTP para microsserviços independentes.
 
-Essa estrutura demonstra:
-- Reutilização de ferramentas dos agentes.
-- Escalabilidade independente de funcionalidades específicas.
-- Observabilidade e métricas isoladas por serviço.
+- **Orquestrador (Agno Team):** Gerencia o fluxo de trabalho e decide qual agente chamar.
+- **search-svc:** Microsserviço de busca semântica em documentos técnicos.
+- **report-svc:** Microsserviço de geração de relatórios formatados em Markdown.
+- **Dashboard (React):** Interface visual para interação com os agentes.
 
-### Fluxo do Sistema
-1. **Usuário solicita:** "Pesquise sobre cold starts e gere um relatório resumido."
-2. O **Orquestrador** delega a tarefa para o **Agente de Pesquisa**.
-3. O **Agente de Pesquisa** faz uma chamada HTTP para o `search-svc` no Cloud Run e recebe os resultados.
-4. O **Orquestrador** envia os resultados para o **Agente de Relatórios**.
-5. O **Agente de Relatórios** faz uma chamada HTTP para o `report-svc` no Cloud Run e recebe o relatório em Markdown.
-6. O **Orquestrador** retorna o resultado final formatado para o usuário.
+---
 
 ## Estrutura do Projeto
 
 ```text
 mlops-agents-microservices/
+├── agents/                 # Orquestrador Agno e definições dos Agentes
+├── frontend/               # Dashboard React (Vite + TypeScript)
 ├── microservices/
-│   ├── search-svc/             # Responsável por buscas semânticas (Base de conhecimento mockada)
-│   │   ├── main.py
-│   │   ├── pyproject.toml
-│   │   └── Dockerfile
-│   └── report-svc/             # Gera relatórios em Markdown a partir do contexto
-│       ├── main.py
-│       ├── pyproject.toml
-│       └── Dockerfile
-├── agents/
-│   ├── search_agent.py         # Agente especializado em pesquisa
-│   ├── report_agent.py         # Agente especializado em geração de relatórios
-│   └── orchestrator.py         # Coordenador central (agno Team)
-├── scripts/
-│   └── deploy.sh               # Script de automação de deploy
-├── .env.example
-├── .gitignore
-├── docker-compose.yml          # Orquestração de containers local
-├── Makefile                    # Atalhos para comandos comuns
-├── GEMINI.md                   # Instruções e contexto para Agentes de IA
+│   ├── search-svc/         # API de Busca (FastAPI)
+│   └── report-svc/         # API de Relatórios (FastAPI)
+├── docs/
+│   └── deploy-cloud-run.md # Guia detalhado de deploy no GCP
+├── scripts/                # Scripts de automação de deploy
+├── docker-compose.dev.yml  # Stack completo local (Dev)
+├── docker-compose.prod.yml # API + Frontend conectando ao Cloud Run
+├── Makefile                # Atalhos para produtividade
 └── README.md
 ```
 
+---
+
 ## Pré-requisitos
 
-- CLI `gcloud` (Google Cloud SDK) configurada e autenticada
-- `docker` e `docker compose` instalados
-- `python >= 3.12`
-- `uv` (instalador ultrarrápido de pacotes Python)
-- `make`
+- **Python >= 3.12** e [**uv**](https://astral.sh/uv/) (gerenciador de pacotes)
+- **Node.js** e **npm** (para o frontend)
+- **Docker** e **Docker Compose**
+- **gcloud CLI** (caso deseje realizar o deploy no GCP)
 
-## Configuração e Instalação
+---
 
-1. **Instalar o `uv` (caso ainda não esteja instalado):**
-   ```bash
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   ```
+## Configuração Inicial
 
-2. **Inicializar o ambiente:**
+1. **Instalar dependências:**
    ```bash
    make setup
    ```
 
-3. **Configurar Variáveis de Ambiente:**
+2. **Configurar Variáveis de Ambiente:**
    ```bash
    cp .env.example .env
-   # Adicione sua GEMINI_API_KEY no arquivo .env
+   # Adicione sua GOOGLE_API_KEY (Gemini) no arquivo .env
    ```
 
-## Executando Localmente
+---
 
-A forma mais simples de executar o projeto completo é utilizando o `docker-compose` via `Makefile`.
+## Modos de Execução
 
-1. **Construir e iniciar os microsserviços:**
-   ```bash
-   make build
-   make up
-   ```
-   *Os serviços estarão disponíveis em http://localhost:8001 (search-svc) e http://localhost:8002 (report-svc). Ao acessar a raiz de cada serviço, você será redirecionado para a documentação Swagger.*
+O projeto suporta dois modos principais de execução via Docker:
 
-2. **Executar o Orquestrador (Demo):**
-   ```bash
-   make run-demo
-   ```
+### 1. Modo Desenvolvimento (Full Local)
+Neste modo, todos os 4 serviços (API, Frontend, Search, Report) rodam localmente em containers.
+```bash
+make build
+make up
+```
+*Acesse o Dashboard em http://localhost:3000*
+
+### 2. Modo Produção Híbrido (Local -> Cloud Run)
+Neste modo, apenas o Orquestrador e o Frontend rodam localmente (ou em containers), mas eles se comunicam com os microsserviços já deployados no **Google Cloud Run**.
+```bash
+# Certifique-se de que as URLs no .env apontam para o Cloud Run
+make build-prod
+make up-prod
+```
+
+---
+
+## Guia de Deploy (Google Cloud Run)
+
+Se você deseja realizar o deploy dos microsserviços no GCP para testar o modo produção ou a escalabilidade serverless, siga as instruções detalhadas no nosso guia:
+
+👉 **[Guia de Deploy no Cloud Run](docs/deploy-cloud-run.md)**
+
+---
 
 ## Comandos Úteis (Makefile)
 
-- `make up`: Inicia os containers em background.
-- `make down`: Para e remove os containers.
-- `make logs`: Visualiza os logs dos serviços em tempo real.
-- `make run-demo`: Executa os agentes localmente.
-- `make clean`: Limpa caches do Python.
+| Comando | Descrição |
+| :--- | :--- |
+| `make setup` | Instala dependências (uv + npm) |
+| `make up` | Sobe o stack completo local (Dev) |
+| `make up-prod` | Sobe Orquestrador + Frontend (conectados ao GCP) |
+| `make down` / `make down-prod` | Para os containers do respectivo modo |
+| `make logs` | Visualiza logs dos containers locais |
+| `make urls` | Exibe as URLs dos serviços no Cloud Run |
+| `make health` | Verifica a saúde dos serviços no Cloud Run |
+| `make deploy` | Realiza o deploy completo no GCP |
 
-## Deploy
+---
 
-O script `scripts/deploy.sh` automatiza o deploy no Google Cloud Run.
-
-```bash
-chmod +x scripts/deploy.sh
-./scripts/deploy.sh
-```
-
-Após o deploy, atualize as URLs no arquivo `.env` para apontar para os endereços do Cloud Run em vez do `localhost`.
+## Autores
+Desenvolvido como demonstração técnica para o Grupo de MLOps.
