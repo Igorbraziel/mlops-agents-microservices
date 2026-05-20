@@ -25,7 +25,7 @@ build: ## Constrói as imagens via Docker Compose (Dev)
 
 up: ## Inicia todos os serviços via Docker Compose (Dev)
 	docker compose -f docker-compose.dev.yml up -d
-	@echo "🚀 Frontend (Dev) disponível em: http://localhost:5173"
+	@echo "🚀 Frontend (Dev) disponível em: http://localhost:3000"
 
 down: ## Para e remove os containers (Dev)
 	docker compose -f docker-compose.dev.yml down
@@ -37,7 +37,7 @@ build-prod: ## Constrói as imagens para o modo produção (API + Frontend)
 
 up-prod: ## Inicia API e Frontend apontando para o Cloud Run
 	docker compose -f docker-compose.prod.yml up -d
-	@echo "🚀 Frontend (Prod) disponível em: http://localhost:8080"
+	@echo "🚀 Frontend (Prod) disponível em: http://localhost:3000"
 
 down-prod: ## Para os containers do modo produção
 	docker compose -f docker-compose.prod.yml down
