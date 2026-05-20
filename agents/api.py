@@ -23,7 +23,7 @@ class ChatResponse(BaseModel):
     content: str
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+def chat(request: ChatRequest):
     try:
         # Run the orchestrator and get the response
         # Using run() instead of print_response() for API usage
