@@ -66,6 +66,8 @@ Neste modo, todos os 4 serviços (API, Frontend, Search, Report) rodam localment
 ```bash
 make build
 make up
+# Para encerrar os serviços locais:
+make down
 ```
 *Acesse o Dashboard em http://localhost:3000*
 
@@ -85,6 +87,8 @@ Neste modo, apenas o Orquestrador e o Frontend rodam localmente (ou em container
 # Certifique-se de que as URLs no .env apontam para o Cloud Run
 make build-prod
 make up-prod
+# Para encerrar os serviços:
+make down-prod
 ```
 
 ---
